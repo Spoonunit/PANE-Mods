@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANE_Custom_Music", "..\..\PANE_Custom_Music\PANE_Custom_Music\PANE_Custom_Music.csproj", "{F2933AFD-E35B-4FFF-9A85-75565F689665}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2933AFD-E35B-4FFF-9A85-75565F689665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2933AFD-E35B-4FFF-9A85-75565F689665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2933AFD-E35B-4FFF-9A85-75565F689665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2933AFD-E35B-4FFF-9A85-75565F689665}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2188B1FF-86DA-480E-A96A-0274C54D2820}
+	EndGlobalSection
+EndGlobal
