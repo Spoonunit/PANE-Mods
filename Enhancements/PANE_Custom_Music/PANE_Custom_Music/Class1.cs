@@ -15,7 +15,7 @@ namespace PANE_Custom_Music
     public class PANECustomMusic : BaseUnityPlugin
     {
         private const string ModGUID = "PANE.ENH.Custom.Music";
-        private const string ModName = "Custom Music (Enhancement)";
+        private const string ModName = "_Enhancement - Custom Music";
         private const string VersionString = "1.0.0";
         static ManualLogSource logger;
 
@@ -32,7 +32,7 @@ namespace PANE_Custom_Music
             // list of settings - these will be surfaced in configuration managed if the mod dll is present in bepinex/plugins
 
             enabled = Config.Bind(  "Settings",
-                                    "On/Off",
+                                    "Enable Custom Music",
                                     false,
                                     "Enable Custom Music");
 
@@ -46,83 +46,90 @@ namespace PANE_Custom_Music
         [HarmonyPrefix]
         private static bool ApplyCustomMusicPatch(LevelMap.MapMusicData musicData)
         {
-            try
+            if (enabled.Value)
             {
-                string musicPath = AudioManager.s_MusicAudioPath + "/" + musicData.Music;
-                string customMusicFolderPath = Path.Combine(Application.dataPath, "Music");
-                if (Directory.Exists(customMusicFolderPath))
+                try
                 {
-                    string matchingFile = FindMatchingFile(customMusicFolderPath, musicData.Music);
-
-                    if (!string.IsNullOrEmpty(matchingFile))
+                    string musicPath = AudioManager.s_MusicAudioPath + "/" + musicData.Music;
+                    string customMusicFolderPath = Path.Combine(Application.dataPath, "Music");
+                    if (Directory.Exists(customMusicFolderPath))
                     {
-                        logger.LogInfo($"Loading custom file: {matchingFile}");
-                        musicData.Clip = LoadMusicClip(matchingFile);
-                        musicData.Clip.name = matchingFile;
+                        string matchingFile = FindMatchingFile(customMusicFolderPath, musicData.Music);
 
-                        return false; // Skip the original method
+                        if (!string.IsNullOrEmpty(matchingFile))
+                        {
+                            logger.LogInfo($"Loading custom file: {matchingFile}");
+                            musicData.Clip = LoadMusicClip(matchingFile);
+                            musicData.Clip.name = matchingFile;
+
+                            return false; // Skip the original method
+                        }
+                        else
+                        {
+                            logger.LogInfo($"Unable to load file: '{musicData.Music}'. File not exist.");
+                            return true; // Continue with original method
+                        }
                     }
                     else
                     {
-                        logger.LogInfo($"Unable to load file: '{musicData.Music}'. File not exist.");
-                        return true; // Continue with original method
+                        logger.LogInfo($"\nUnable to load custom music folder.\nPlease create 'Music' folder inside this path: '{Application.dataPath}' to achieve this path: '{customMusicFolderPath}'");
                     }
+
+                    musicData.Clip = Resources.Load<AudioClip>(musicPath);
+
+                    return false; // Skip the original method
                 }
-                else
+                catch (Exception e)
                 {
-                    logger.LogInfo($"\nUnable to load custom music folder.\nPlease create 'Music' folder inside this path: '{Application.dataPath}' to achieve this path: '{customMusicFolderPath}'");
+                    logger.LogInfo($"Unable to load custom music: {e}");
                 }
-
-                musicData.Clip = Resources.Load<AudioClip>(musicPath);
-
-                return false; // Skip the original method
             }
-            catch (Exception e)
-            {
-                logger.LogInfo($"Unable to load custom music: {e}");
-
-                return true;
-            }
+            return true;
         }
+
+
         [HarmonyPatch(typeof(AudioManager), "PlaySpecificMusic", new Type[] { typeof(AudioClip[]), typeof(bool) })]
         [HarmonyPrefix]
         private static bool PrefixPlaySpecificMusic(ref AudioClip[] clips)
         {
-            try
+            if (enabled.Value)
             {
-                string customMusicFolderPath = Path.Combine(Application.dataPath, "Music");
-
-                if (Directory.Exists(customMusicFolderPath) && clips.Length > 0)
+                try
                 {
-                    for (int i = 0; i < clips.Length; i++)
+                    string customMusicFolderPath = Path.Combine(Application.dataPath, "Music");
+
+                    if (Directory.Exists(customMusicFolderPath) && clips.Length > 0)
                     {
-                        string clipName = clips[i].name;
-                        string matchingFile = FindMatchingFile(customMusicFolderPath, clipName);
-                        if (!string.IsNullOrEmpty(matchingFile))
+                        for (int i = 0; i < clips.Length; i++)
                         {
-                            logger.LogInfo($"Loading custom file: '{matchingFile}'.");
-                            clips[i] = LoadMusicClip(matchingFile);
-                            clips[i].name = matchingFile;
+                            string clipName = clips[i].name;
+                            string matchingFile = FindMatchingFile(customMusicFolderPath, clipName);
+                            if (!string.IsNullOrEmpty(matchingFile))
+                            {
+                                logger.LogInfo($"Loading custom file: '{matchingFile}'.");
+                                clips[i] = LoadMusicClip(matchingFile);
+                                clips[i].name = matchingFile;
 
+                            }
+                            else
+                            {
+                                logger.LogInfo($"Unable to load file: '{clipName}'. File not exist.");
+                            }
                         }
-                        else
-                        {
-                            logger.LogInfo($"Unable to load file: '{clipName}'. File not exist.");
-                        }
+                        return true; // Continue with original method
                     }
-                    return true; // Continue with original method
+                    else
+                    {
+                        logger.LogInfo($"\nUnable to load custom music folder.\nPlease create 'Music' folder inside this path: '{Application.dataPath}' to achieve this path: '{customMusicFolderPath}'");
+                        return true; // Continue with original method
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    logger.LogInfo($"\nUnable to load custom music folder.\nPlease create 'Music' folder inside this path: '{Application.dataPath}' to achieve this path: '{customMusicFolderPath}'");
-                    return true; // Continue with original method
+                    logger.LogInfo($"Unable to play specific music: {e}");
                 }
             }
-            catch (Exception e)
-            {
-                logger.LogInfo($"Unable to play specific music: {e}");
-            }
-            return true; // Continue with original method
+            return true;
         }
 
         private static AudioClip LoadMusicClip(string path)
