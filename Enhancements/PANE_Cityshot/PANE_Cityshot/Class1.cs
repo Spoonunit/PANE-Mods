@@ -32,7 +32,7 @@ namespace PANE_Cityshot
             // list of settings - these will be surfaced in configuration managed if the mod dll is present in bepinex/plugins
 
             enabled = Config.Bind("Settings",
-                                    "On/Off",
+                                    "Enable Cityshot",
                                     false,
                                     "Enable Cityshot");
             superRes = Config.Bind("Settings",
