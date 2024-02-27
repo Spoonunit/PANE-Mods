@@ -10,6 +10,8 @@ using Debug = UnityEngine.Debug;
 using Application = UnityEngine.Application;
 using BepInEx.Configuration;
 
+// Author : SpoonUnit, Danie!
+
 namespace PANE_Cityshot
 {
     [BepInPlugin(ModGUID, ModName, VersionString)]

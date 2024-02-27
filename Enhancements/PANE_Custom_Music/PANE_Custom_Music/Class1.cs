@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Application = UnityEngine.Application;
 
+// Author : Danie!, SpoonUnit
+
 namespace PANE_Custom_Music
 {
     [BepInPlugin(ModGUID, ModName, VersionString)]
