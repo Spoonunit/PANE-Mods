@@ -11,6 +11,9 @@ using Application = UnityEngine.Application;
 using BepInEx.Configuration;
 
 // Author : SpoonUnit, Danie!
+// Tested On : 2024-02-27
+// Tested By : satur
+// Tested With PANE Version : Pharaoh (28/12/2023 11:54:44)
 
 namespace PANE_Cityshot
 {
@@ -18,7 +21,7 @@ namespace PANE_Cityshot
     public class PANECityshot : BaseUnityPlugin
     {
         private const string ModGUID = "PANE.ENH.Cityshot";
-        private const string ModName = "_Enhancement - Cityshot";
+        private const string ModName = "Enhancement - Cityshot";
         private const string VersionString = "1.0.0";
         static ManualLogSource logger;
 
