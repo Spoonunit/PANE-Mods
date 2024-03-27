@@ -25,7 +25,7 @@ namespace ZoomToCursor
             logger = Logger;
             logger.LogInfo($"Plugin {ModName} is loaded!");
 
-            conf_zoomToCursor = Config.Bind("Camera", "Allow zoom to cursor", true, "Enabling zoom to cursor position instead to center of actual view.");
+            conf_zoomToCursor = Config.Bind("Camera", "Allow zoom to cursor", false, "Enabling zoom to cursor position instead to center of actual view.");
 
             Harmony.CreateAndPatchAll(typeof(ZoomToCursorPlugin));
             logger.LogInfo($"{ModName} applied!");
