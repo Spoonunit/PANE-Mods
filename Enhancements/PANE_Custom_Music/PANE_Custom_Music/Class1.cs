@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -10,6 +10,8 @@ using UnityEngine.Networking;
 using Application = UnityEngine.Application;
 
 // Author : Danie!, SpoonUnit
+// Tested By : Danie!
+// Tested With PANE Version : 1.5.3
 
 namespace PANE_Custom_Music
 {
@@ -17,26 +19,26 @@ namespace PANE_Custom_Music
     public class PANECustomMusic : BaseUnityPlugin
     {
         private const string ModGUID = "PANE.ENH.Custom.Music";
-        private const string ModName = "_Enhancement - Custom Music";
-        private const string VersionString = "1.0.0";
+        private const string ModName = "Enhancement - Custom Music";
+        private const string VersionString = "1.1.0";
         static ManualLogSource logger;
 
         // settings
-        private static ConfigEntry<bool> enabled;
-        
+        static ConfigEntry<bool> conf_enableMusic;
+
         // load patch and reference settings
         private void Awake()
         {
             logger = Logger;
-            logger.LogInfo($"Plugin {ModGUID} is loaded!");
+            logger.LogInfo($"Plugin {ModName} is loaded!");
 
-            // to do - determine if changes to setting value are immediately impactful or does the game need to be reloaded
+            // settings change have impact only in menu (going from menu to credits and back) in game is needed to reload save 
             // list of settings - these will be surfaced in configuration managed if the mod dll is present in bepinex/plugins
 
-            enabled = Config.Bind(  "Settings",
+            conf_enableMusic = Config.Bind("Music",
                                     "Enable Custom Music",
                                     false,
-                                    "Enable Custom Music");
+                                    "Enable Custom Music (For correct apply needed save reload)");
 
             Harmony.CreateAndPatchAll(typeof(PANECustomMusic));
             logger.LogInfo($"{ModName} applied!");
@@ -48,7 +50,7 @@ namespace PANE_Custom_Music
         [HarmonyPrefix]
         private static bool ApplyCustomMusicPatch(LevelMap.MapMusicData musicData)
         {
-            if (enabled.Value)
+            if (conf_enableMusic.Value)
             {
                 try
                 {
@@ -84,17 +86,17 @@ namespace PANE_Custom_Music
                 catch (Exception e)
                 {
                     logger.LogInfo($"Unable to load custom music: {e}");
+
+
                 }
             }
             return true;
         }
-
-
         [HarmonyPatch(typeof(AudioManager), "PlaySpecificMusic", new Type[] { typeof(AudioClip[]), typeof(bool) })]
         [HarmonyPrefix]
         private static bool PrefixPlaySpecificMusic(ref AudioClip[] clips)
         {
-            if (enabled.Value)
+            if (conf_enableMusic.Value)
             {
                 try
                 {
@@ -130,6 +132,7 @@ namespace PANE_Custom_Music
                 {
                     logger.LogInfo($"Unable to play specific music: {e}");
                 }
+
             }
             return true;
         }
